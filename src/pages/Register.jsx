@@ -1,34 +1,108 @@
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import {styled} from 'styled-components';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import Logo from '../assets/logo.png'
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios';
+import { registerRoute } from '../utils/APIRoutes';
 
 function Register() {
-    const handleEvent = (event)=>{
-        event.preventDefault();
-        alert("Form");
-    }
-    const handleChange = (e)=>{
 
+  const navigate = useNavigate();
+
+    const toastOptions =  {
+        position : "bottom-right",
+        autoClose : 8000,
+        pauseOnHover : true,
+        draggable : true,
+        theme : "dark"
     }
+    const [values,setValues] = useState({
+        username : "",
+        email : "",
+        password : "",
+        confirmpassword : ""
+
+    })
+
+    const handleChange = (event)=>{
+        setValues({ ...values , [event.target.name] : event.target.value})
+    };
+    
+    const handleValidation = () => {
+        const { password, confirmPassword, username, email } = values;
+        // if (password !== confirmPassword) {
+        //   toast.error(
+        //     "Password and confirm password should be same.",
+        //     toastOptions
+        //   );
+        //   return false;
+        // }
+          if (username.length < 3) {
+          toast.error(
+            "Username should be greater than 3 characters.",
+            toastOptions
+          );
+          return false;
+        } 
+        else if (password.length < 8) {
+          toast.error(
+            "Password should be contain atleast 8 characters.",
+            toastOptions
+          );
+          return false;
+        }
+         else if (email === "") {
+          toast.error("Email is required.", toastOptions);
+          return false;
+        }
+    
+        return true;
+      };
+    
+   
+
+   
+    const handleSubmit = async(event) =>{
+        event.preventDefault();
+        if(handleValidation()){
+            const { password, confirmPassword, username, email } = values;
+            const {data} = await axios.post(registerRoute,{
+                username,
+                email,
+                password
+            });
+            if(data.status === false){
+              toast.error(data.msg, toastOptions);
+            }
+            if(data.status === true){
+              localStorage.setItem('user-chat-app',JSON.stringify(data.user))
+              navigate('/')
+            }
+        }
+    }
+
   return (
     <>
     <FormContainer>
-        <form onSubmit={(event)=>{handleEvent(event)}}>
+        <form onSubmit={(event)=>{handleSubmit(event)}}>
 
-            <div className="brand">
+            <div className="brand">  
                 <img src={Logo} alt="Logo" />
                 <h1>Chat-App</h1>
             </div>
-            <input type="text" name='username' placeholder='Username' onChange={e=>handleChange(e)} />
-            <input type="email" name='email' placeholder='Email' onChange={e=>handleChange(e)} />
-            <input type="password" name='password' placeholder='Password' onChange={e=>handleChange(e)} />
-            <input type="password" name='confirmpassword' placeholder='Confirm Password' onChange={e=>handleChange(e)} />
-            <button type='submit'>Create User</button>
+            <input type="text" name='username' placeholder='Username' onChange={(e)=>handleChange(e)} />
+            <input type="email" name='email' placeholder='Email' onChange={(e)=>handleChange(e)} />
+            <input type="password" name='password' placeholder='Password' onChange={(e)=>handleChange(e)} />
+            <input type="password" name='confirmpassword' placeholder='Confirm Password' onChange={(e)=>handleChange(e)} />
+            <button type='submit' >Create User</button>
             <span>Already have an account?<Link to='/login'>Login</Link></span>
 
         </form>
     </FormContainer>
+
+    <ToastContainer/>
     
     
     </>

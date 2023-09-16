@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const userRoutes = require('./routes/userRoutes')
 const port = 5000;
 
 
@@ -9,6 +10,8 @@ require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/auth',userRoutes)
 
 mongoose.connect("mongodb+srv://sayanmajumdar4444:Sayan4444@chat-app.tnb7thj.mongodb.net/Chat-App",{
     useNewUrlParser : true,
