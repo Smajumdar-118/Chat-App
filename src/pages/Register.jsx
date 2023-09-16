@@ -32,20 +32,20 @@ function Register() {
     
     const handleValidation = () => {
         const { password, confirmPassword, username, email } = values;
-        // if (password !== confirmPassword) {
+        if (username.length < 3) {
+        toast.error(
+          "Username should be greater than 3 characters.",
+          toastOptions
+        );
+        return false;
+      } 
+        // else if (password !== confirmPassword) {
         //   toast.error(
         //     "Password and confirm password should be same.",
         //     toastOptions
         //   );
         //   return false;
         // }
-          if (username.length < 3) {
-          toast.error(
-            "Username should be greater than 3 characters.",
-            toastOptions
-          );
-          return false;
-        } 
         else if (password.length < 8) {
           toast.error(
             "Password should be contain atleast 8 characters.",
@@ -67,7 +67,7 @@ function Register() {
     const handleSubmit = async(event) =>{
         event.preventDefault();
         if(handleValidation()){
-            const { password, confirmPassword, username, email } = values;
+            const { password, username, email } = values;
             const {data} = await axios.post(registerRoute,{
                 username,
                 email,
@@ -77,7 +77,7 @@ function Register() {
               toast.error(data.msg, toastOptions);
             }
             if(data.status === true){
-              localStorage.setItem('user-chat-app',JSON.stringify(data.user))
+              localStorage.setItem('user-chat-app',JSON.stringify(data.user));
               navigate('/')
             }
         }
