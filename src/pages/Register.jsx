@@ -11,6 +11,14 @@ function Register() {
 
   const navigate = useNavigate();
 
+
+  
+  useEffect(()=>{
+    if(localStorage.getItem('user-chat-app')){
+      navigate('/')
+    }
+  },[])
+
     const toastOptions =  {
         position : "bottom-right",
         autoClose : 8000,
