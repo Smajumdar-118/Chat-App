@@ -35,7 +35,7 @@ const localStr = async()=>{
       toast.error("Please select an avatar", toastOptions);
     } else {
       const user = await JSON.parse(
-        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+        localStorage.getItem('user-chat-app')
       );
 
       const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
@@ -45,8 +45,9 @@ const localStr = async()=>{
       if (data.isSet) {
         user.isAvatarImageSet = true;
         user.avatarImage = data.image;
+        
         localStorage.setItem(
-          process.env.REACT_APP_LOCALHOST_KEY,
+          'user-chat-app',
           JSON.stringify(user)
         );
         navigate("/");
